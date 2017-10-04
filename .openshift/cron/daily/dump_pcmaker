@@ -1,0 +1,13 @@
+#!/bin/bash
+
+DATE=`date +%Y-%m-%d-%H_%M`
+BACKUP_NAME=dump-pcmaker-$DATE.sql
+echo "  -- Gerando Backup da base de dados $OPENSHIFT_GEAR_NAME em $BACKUP_NAME ..."
+mysqldump -u $OPENSHIFT_MYSQL_DB_USERNAME -h $OPENSHIFT_MYSQL_DB_HOST --password=$OPENSHIFT_MYSQL_DB_PASSWORD $OPENSHIFT_GEAR_NAME > $BACKUP_NAME
+echo "  -- Gzip para arquivo $BACKUP_NAME.gz ..."
+gzip $BACKUP_NAME
+echo "  -- Enviado e-mail ..."
+mail -s "Dump pcmaker $DATE" -a $BACKUP_NAME.gz guaravitonrj@gmail.com pcmaker.info@gmail.com
+echo "  -- Removendo arquivos criados ..."
+rm -rf $BACKUP_NAME
+rm -rf $BACKUP_NAME.gz
